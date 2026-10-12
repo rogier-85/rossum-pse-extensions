@@ -1,0 +1,17 @@
+{
+  "dataset": "invoice_line_items",
+  "line_items_schema_id": "line_items",
+  "fields": {
+    "annotation_id": "@annotation_id",
+    "row_id": "@row_id",
+    "description": "item_description",
+    "quantity": "item_quantity",
+    "unit_price": "item_amount",
+    "total": "item_amount_base"
+  },
+  "id_keys": ["annotation_id", "row_id"],
+  "statuses": ["exported"],
+  "create_dataset_if_missing": false,
+  "use_normalized_values": false,
+  "dry_run": false
+}
