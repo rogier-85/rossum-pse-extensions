@@ -1,0 +1,41 @@
+{
+  "name": "Link India WHT certificate",
+  "type": "function",
+  "active": false,
+  "events": [
+    "annotation_content.started"
+  ],
+  "queues": [
+    "https://example.rossum.app/api/v1/queues/CURRENT_QUEUE_ID"
+  ],
+  "run_after": [],
+  "sideload": [
+    "relations",
+    "child_relations"
+  ],
+  "token_owner": "https://example.rossum.app/api/v1/users/TOKEN_OWNER_ID",
+  "token_lifetime_s": 600,
+  "settings": {
+    "target_queue_url": "https://example.rossum.app/api/v1/queues/WHT_QUEUE_ID"
+  },
+  "settings_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "target_queue_url"
+    ],
+    "properties": {
+      "target_queue_url": {
+        "type": "string",
+        "format": "uri",
+        "title": "WHT certificate queue URL"
+      }
+    }
+  },
+  "config": {
+    "runtime": "python3.12",
+    "third_party_library_pack": null,
+    "timeout_s": 30,
+    "code": "PASTE_THE_COMPLETE_CONTENTS_OF_wht_certificate_linker.py_HERE"
+  }
+}

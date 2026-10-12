@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rossum-remove-irrelevant-line-items"
+version = "1.1.0"
+description = "Rossum serverless function for removing trailing irrelevant line items"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.setuptools]
+py-modules = ["remove_irrelevant_line_items"]

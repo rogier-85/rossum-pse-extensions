@@ -1,0 +1,6 @@
+{
+  "target_field_ids": [
+    "amount_due",
+    "subtotal"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "type": "function",
+  "name": "Remove irrelevant trailing line items",
+  "queues": [
+    "https://example.rossum.app/api/v1/queues/QUEUE_ID"
+  ],
+  "run_after": [],
+  "active": true,
+  "events": [
+    "annotation_content.initialize"
+  ],
+  "sideload": [],
+  "payload_logging_enabled": false,
+  "settings": {
+    "target_field_ids": [
+      "amount_due",
+      "subtotal"
+    ]
+  },
+  "settings_schema": {
+    "type": "object",
+    "title": "Line-item cleanup settings",
+    "properties": {
+      "target_field_ids": {
+        "type": "array",
+        "title": "Target amount fields",
+        "description": "Header field schema IDs whose values may match the sum of the retained line items.",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1,
+        "uniqueItems": true,
+        "default": [
+          "amount_due"
+        ]
+      }
+    },
+    "required": [
+      "target_field_ids"
+    ],
+    "additionalProperties": false
+  },
+  "config": {
+    "runtime": "python3.12",
+    "code": "PASTE_THE_CONTENTS_OF_remove_irrelevant_line_items.py_HERE",
+    "third_party_library_pack": null
+  }
+}

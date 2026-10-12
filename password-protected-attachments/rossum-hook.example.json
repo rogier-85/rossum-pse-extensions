@@ -1,0 +1,20 @@
+{
+  "name": "Password-protected PDF unlocker",
+  "type": "webhook",
+  "active": true,
+  "events": [
+    "email.received"
+  ],
+  "queues": [
+    "https://YOUR_TENANT.rossum.app/api/v1/queues/YOUR_QUEUE_ID"
+  ],
+  "token_owner": "https://YOUR_TENANT.rossum.app/api/v1/users/YOUR_USER_ID",
+  "config": {
+    "url": "https://YOUR_SERVICE.onrender.com/rossum/email-received",
+    "secret": "USE_THE_SAME_RANDOM_SECRET_AS_RENDER",
+    "insecure_ssl": false,
+    "timeout_s": 60,
+    "retry_count": 4,
+    "payload_logging_enabled": false
+  }
+}
