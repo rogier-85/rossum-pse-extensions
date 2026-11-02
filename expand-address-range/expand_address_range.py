@@ -1,6 +1,30 @@
 """Paste-ready Rossum Python 3.12 function for expanding address ranges."""
 
 import re
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation, localcontext
+
+
+def split_amount(value: object, count: int) -> list[str] | None:
+    """Split a monetary total, allocating the rounding difference to the last row."""
+    try:
+        total = Decimal(str(value))
+        if not total.is_finite():
+            return None
+        with localcontext() as context:
+            context.prec = max(
+                28,
+                len(total.as_tuple().digits) + abs(total.adjusted()) + len(str(count)) + 4,
+            )
+            share = (total / count).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            last = total - share * (count - 1)
+            last_value = (
+                format(last, ".2f")
+                if last == last.quantize(Decimal("0.01"))
+                else format(last, "f")
+            )
+            return [format(share, "f")] * (count - 1) + [last_value]
+    except (InvalidOperation, ValueError):
+        return None
 
 
 def parse_range(value: object) -> range | None:
@@ -46,10 +70,12 @@ def rossum_hook_request_handler(payload: dict) -> dict:
                 output.append(values)
             else:
                 changed = True
-                output.extend(
-                    {**values, "item_house_number": str(number)}
-                    for number in numbers
-                )
+                amounts = split_amount(values.get("item_amount_total"), len(numbers))
+                for index, number in enumerate(numbers):
+                    expanded = {**values, "item_house_number": str(number)}
+                    if amounts is not None:
+                        expanded["item_amount_total"] = amounts[index]
+                    output.append(expanded)
 
     transaction = TxScript.from_payload(payload)
     if changed:
