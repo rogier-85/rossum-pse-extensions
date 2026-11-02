@@ -1,4 +1,5 @@
 from copy import deepcopy
+from decimal import Decimal
 
 import pytest
 
@@ -67,7 +68,10 @@ def test_expansion_with_real_txscript(house_type):
     response = rossum_hook_request_handler(make_payload([source], house_type=house_type))
     rows = added_rows(response)
     assert len(rows) == 16
-    assert rows == [{**source, "item_house_number": str(n)} for n in range(15, 31)]
+    assert rows == [
+        {**source, "item_house_number": str(n), "item_amount_total": "0.80" if n == 30 else "0.78"}
+        for n in range(15, 31)
+    ]
     assert response["messages"] == []
     assert [op for op in response["operations"] if op["op"] == "remove"] == [{"op": "remove", "id": 100}]
     for op in response["operations"]:
@@ -102,3 +106,36 @@ def test_repeat_initialization_expands_again():
     rows = added_rows(rossum_hook_request_handler(make_payload([{"item_address_range": "1-2"}])))
     response = rossum_hook_request_handler(make_payload(deepcopy(rows)))
     assert len(added_rows(response)) == 4
+
+
+@pytest.mark.parametrize("total,expected", [
+    ("10.00", ["3.33", "3.33", "3.34"]),
+    ("10.01", ["3.34", "3.34", "3.33"]),
+    ("12.00", ["4.00", "4.00", "4.00"]),
+    ("-10.00", ["-3.33", "-3.33", "-3.34"]),
+    ("0", ["0.00", "0.00", "0.00"]),
+    ("0.01", ["0.00", "0.00", "0.01"]),
+    ("1.005", ["0.34", "0.34", "0.325"]),
+])
+def test_amount_allocation_preserves_original_total(total, expected):
+    rows = added_rows(rossum_hook_request_handler(make_payload([
+        {"item_address_range": "1-3", "item_amount_total": total}
+    ])))
+    assert [row["item_amount_total"] for row in rows] == expected
+    assert sum(Decimal(row["item_amount_total"]) for row in rows) == Decimal(total)
+
+
+@pytest.mark.parametrize("total", ["", "invalid", "NaN", "Infinity"])
+def test_invalid_amount_remains_unchanged(total):
+    rows = added_rows(rossum_hook_request_handler(make_payload([
+        {"item_address_range": "1-2", "item_amount_total": total}
+    ])))
+    assert [row["item_amount_total"] for row in rows] == [total, total]
+
+
+def test_single_row_and_unranged_amounts():
+    rows = added_rows(rossum_hook_request_handler(make_payload([
+        {"item_address_range": "1-1", "item_amount_total": "10.01"},
+        {"item_address_range": "", "item_amount_total": "0012.50"},
+    ])))
+    assert [row["item_amount_total"] for row in rows] == ["10.01", "0012.50"]
