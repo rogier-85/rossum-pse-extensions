@@ -35,6 +35,8 @@ class ImporterTests(unittest.TestCase):
         self.assertEqual(args[2], 'PUT')
         self.assertTrue(args[0].endswith('/dataset/vendor%20master'))
         self.assertIn(b'filename="dataset.csv"', args[3])
+        self.assertIn(b'Content-Type: text/csv\r\n', args[3])
+        self.assertTrue(args[4].startswith('multipart/form-data; boundary='))
         self.assertIn(b'id,name\n1,Example\n', args[3])
         self.assertEqual(payload, original)
 
@@ -44,6 +46,7 @@ class ImporterTests(unittest.TestCase):
                 (200, {}, b'PK\x03\x04binary'), (202, {'Location': '/operation/1'}, {})]) as api:
             main.rossum_hook_request_handler(payload)
         self.assertIn(b'filename="dataset.xlsx"', api.call_args.args[3])
+        self.assertIn(b'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\n', api.call_args.args[3])
         self.assertIn(b'PK\x03\x04binary', api.call_args.args[3])
 
     def test_unmatched_and_unsupported_untouched(self):
