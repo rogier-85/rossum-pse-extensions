@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rossum-expand-address-range"
+version = "1.0.0"
+description = "Expand Rossum line items into individual house numbers"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "txscript==1.2.0"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools]
+py-modules = ["expand_address_range"]

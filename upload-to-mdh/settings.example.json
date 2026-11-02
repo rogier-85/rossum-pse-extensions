@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {"filename_contains": "suppliers", "dataset": "suppliers"},
+    {"filename_contains": "purchase_orders", "dataset": "purchase_orders"},
+    {"filename_contains": "chart_of_accounts", "dataset": "chart_of_accounts"}
+  ],
+  "encoding": "utf-8",
+  "dynamic": true,
+  "suppress_processing": true,
+  "dry_run": true
+}

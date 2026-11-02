@@ -1,0 +1,16 @@
+{
+  "type": "function",
+  "name": "Expand address ranges",
+  "queues": ["https://example.rossum.app/api/v1/queues/QUEUE_ID"],
+  "run_after": [],
+  "active": true,
+  "events": ["annotation_content.initialize"],
+  "sideload": ["schemas"],
+  "payload_logging_enabled": false,
+  "settings": {},
+  "config": {
+    "runtime": "python3.12",
+    "code": "PASTE_THE_CONTENTS_OF_expand_address_range.py_HERE",
+    "third_party_library_pack": null
+  }
+}
