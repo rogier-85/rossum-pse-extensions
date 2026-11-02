@@ -86,6 +86,10 @@ def route(filename, rules):
 
 
 def multipart(data, suffix, settings):
+    media_type = {
+        'csv': 'text/csv',
+        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }[suffix]
     boundary = 'rossum-' + uuid.uuid4().hex
     fields = {'encoding': settings.get('encoding', 'utf-8'),
               'dynamic': str(settings.get('dynamic', True)).lower(),
@@ -96,7 +100,7 @@ def multipart(data, suffix, settings):
                        % (boundary, name, value)).encode())
     # Fixed safe filename preserves the format without interpolating input into headers.
     chunks.append(('--%s\r\nContent-Disposition: form-data; name="file"; filename="dataset.%s"'
-                   '\r\nContent-Type: application/octet-stream\r\n\r\n' % (boundary, suffix)).encode())
+                   '\r\nContent-Type: %s\r\n\r\n' % (boundary, suffix, media_type)).encode())
     chunks.extend([data, ('\r\n--%s--\r\n' % boundary).encode()])
     return b''.join(chunks), 'multipart/form-data; boundary=' + boundary
 
